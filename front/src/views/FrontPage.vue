@@ -3,7 +3,7 @@
     <div class="filmrow">
       <film-card
           v-for="movie in movies"
-          cardImage="movie.cardImage" title="movie.title" genre="movie.genre"/>
+          cardImage="movie.card_image" title="movie.title" genre="movie.genre"/>
     </div>
   </div>
 
@@ -22,30 +22,30 @@ export default {
       page: 1,
       movies: [],
       paginator: {
-        hasOtherPages: false,
-        hasPrevious: false,
-        hasNext: false,
-        previousPageNumber: 1,
-        nextPageNumber: 1,
+        has_other_pages: false,
+        has_previous: false,
+        has_next: false,
+        previous_page_number: 1,
+        next_page_number: 1,
         number: 1
       },
       genres: [],
-      apiKey: "",
-      sessionId: "",
-      userId: "",
+      api_key: "",
+      session_id: "",
+      user_id: "",
       pages: []
     }
   },
 
   methods: {
-    add_impression(userId, eventType, contentId, sessionId) {
+    add_impression(user_id, event_type, content_id, session_id) {
       try {
         axios.post("http://localhost:8081/collect/log/", {
           params: {
-            "event_type": eventType,
-            "user_id": userId,
-            "content_id": contentId,
-            "session_id": sessionId
+            "event_type": event_type,
+            "user_id": user_id,
+            "content_id": content_id,
+            "session_id": session_id
           }
         })
       } catch (e) {
@@ -72,8 +72,8 @@ export default {
       }
     },
 
-    async getPicture(movieId) {
-      let url = 'https://api.themoviedb.org/3/find/tt' + movieId + '?external_source=imdb_id&api_key=' + this.apiKey
+    async getPicture(movie_id) {
+      let url = 'https://api.themoviedb.org/3/find/tt' + movie_id + '?external_source=imdb_id&api_key=' + this.api_key
       const response = await axios.get(url)
       this.movies.forEach(m => m.cardImage = "http://image.tmdb.org/t/p/w500/" + response.data.movie_results[0].poster_path)
     }

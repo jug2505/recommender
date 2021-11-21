@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'movies',
+    'collector',
+    'analytics',
+    'recommender',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +87,7 @@ WSGI_APPLICATION = 'rs_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'moviegeek',
+        'NAME': 'movierecs',
         'USER': 'jug2505',
         'PASSWORD': '1232',
         'HOST': 'localhost',
