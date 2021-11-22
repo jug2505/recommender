@@ -1,9 +1,12 @@
 <template>
   <div>
     <div class="filmrow">
-      <film-card
-          v-for="movie in movies"
-          cardImage="movie.card_image" title="movie.title" genre="movie.genre"/>
+        <film-card
+            v-for="movie in movies"
+            v-bind:title="movie.title"
+            v-bind:genre="movie.year"
+            :card_image="movie.card_image"
+            v-bind:key="movie.movie_id"/>
     </div>
   </div>
 
@@ -63,9 +66,9 @@ export default {
         this.paginator = response.data.paginator
         this.movies = response.data.movies
         this.genres = response.data.genres
-        this.apiKey = response.data.api_key
-        this.sessionId = response.data.session_id
-        this.userId = response.data.user_id
+        this.api_key = response.data.api_key
+        this.session_id = response.data.session_id
+        this.user_id = response.data.user_id
         this.pages = response.data.pages
       } catch (e) {
         alert(e)
@@ -75,13 +78,27 @@ export default {
     async getPicture(movie_id) {
       let url = 'https://api.themoviedb.org/3/find/tt' + movie_id + '?external_source=imdb_id&api_key=' + this.api_key
       const response = await axios.get(url)
-      this.movies.forEach(m => m.cardImage = "http://image.tmdb.org/t/p/w500/" + response.data.movie_results[0].poster_path)
-    }
+      let path = ""
+      if (response.data.movie_results && response.data.movie_results[0] && response.data.movie_results[0].poster_path) {
+        path = "http://image.tmdb.org/t/p/w185/" + response.data.movie_results[0].poster_path
+      }
+      return path
+    },
 
   },
 
-  mounted() {
-    this.fetchData()
+  created() {
+    this.fetchData().then(
+        () => {
+          this.movies.forEach(
+              m => this.getPicture(m.movie_id).then(
+                path => m.card_image = path
+              ).then(() => {
+                this.movies = this.movies.filter(m => m.card_image !== "")
+              })
+          )
+        }
+    )
   }
 }
 </script>
@@ -89,5 +106,6 @@ export default {
 <style>
 .filmrow {
   display: flex;
+  flex-wrap: wrap;
 }
 </style>

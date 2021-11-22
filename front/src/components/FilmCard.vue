@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <img :src="cardImage" :alt="'img: ' + title">
+    <img :src="card_image" :alt="'img: ' + title">
     <div class="info">
       <div class="top">
         <div class="name"> {{ title }}</div>
@@ -13,11 +13,17 @@
 <script>
 export default {
   name: "FilmCard",
+  props: {
+    card_image: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
-      cardImage: this.$attrs.cardImage,
       title: this.$attrs.title,
       genre: this.$attrs.genre,
+      //card_image: this.$attrs.card_image,
     }
   }
 }
@@ -28,8 +34,8 @@ export default {
   font-family: 'Roboto', serif;
   display: flex;
   flex-direction: column;
-  width: 315px;
-  height: 200px;
+  width: 185px; /*315*/
+  height: 350px; /*200*/
   color: white;
   margin-right: 5px;
 }
