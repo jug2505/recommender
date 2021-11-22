@@ -3,8 +3,8 @@
     <div class="filmrow">
         <film-card
             v-for="movie in movies"
-            v-bind:title="movie.title"
-            v-bind:genre="movie.year"
+            :title="movie.title"
+            :genre="movie.year"
             :card_image="movie.card_image"
             v-bind:key="movie.movie_id"/>
     </div>

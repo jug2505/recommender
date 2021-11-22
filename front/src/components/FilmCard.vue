@@ -17,13 +17,19 @@ export default {
     card_image: {
       type: String,
       default: ""
+    },
+    title: {
+      type: String,
+      default: ""
+    },
+    genre: {
+      type: String,
+      default: ""
     }
   },
   data() {
     return {
-      title: this.$attrs.title,
-      genre: this.$attrs.genre,
-      //card_image: this.$attrs.card_image,
+
     }
   }
 }
