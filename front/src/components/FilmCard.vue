@@ -4,7 +4,7 @@
     <div class="info">
       <div class="top">
         <div class="name"> {{ title }}</div>
-        <div class="genre"> {{ genre }}</div>
+        <div class="genre"> {{ year }}</div>
       </div>
     </div>
   </div>
@@ -22,9 +22,9 @@ export default {
       type: String,
       default: ""
     },
-    genre: {
-      type: String,
-      default: ""
+    year: {
+      type: Number,
+      default: 0
     }
   },
   data() {
