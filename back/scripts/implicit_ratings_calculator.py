@@ -13,10 +13,10 @@ from collections import defaultdict
 from collector.models import Log
 from analytics.models import Rating
 
-
-w1 = 100
-w2 = 50
-w3 = 15
+# Веса для событий
+w1 = 100  # buy
+w2 = 50  # moredetails
+w3 = 15  # details
 
 def calculate_decay(age_in_days):
     return 1/age_in_days
@@ -42,7 +42,7 @@ def calculate_implicit_ratings_w_timedecay(user_id):
 
     data = query_log_data_for_user(user_id)
 
-    weights = {'buy': w1, 'moredetails': w2, 'details': w3 }
+    weights = {'buy': w1, 'moredetails': w2, 'details': w3}
     ratings = dict()
 
     for entry in data:
