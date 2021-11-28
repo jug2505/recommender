@@ -1,6 +1,6 @@
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "prs_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
 
 import django
 django.setup()
@@ -12,6 +12,9 @@ from datetime import datetime
 from collector.models import Log
 from recommender.models import SeededRecs
 
+# Предупреждение локальной даты
+import warnings
+warnings.filterwarnings("ignore")
 
 def build_association_rules():
     data = retrieve_buy_events()

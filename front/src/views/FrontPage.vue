@@ -8,6 +8,7 @@
             :card_image="movie.card_image"
             v-bind:key="movie.movie_id"/>
     </div>
+
     <div class="film-row">
       <div class="pagination" v-if="paginator.has_other_pages">
         <button v-if="paginator.has_previous" @click="changePage(paginator.previous_page_number)">&laquo;</button>
@@ -18,12 +19,26 @@
         <button v-if="paginator.has_next" @click="changePage(paginator.next_page_number)">&raquo;</button>
       </div>
     </div>
+
+    <div v-if="movies_ar.length !== 0" class="row-title">
+      Рекомендации на основе ассоциативных правил
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in movies_ar"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
+
   </div>
 
 </template>
 
 <script>
 import FilmCard from "../components/FilmCard";
+import store from '../store'
 import axios from 'axios';
 
 export default {
@@ -45,8 +60,10 @@ export default {
       genres: [],
       api_key: "",
       session_id: "",
-      user_id: "",
-      pages: []
+      user_id: store.state.user_id,
+      pages: [],
+
+      movies_ar: []
     }
   },
 
@@ -78,8 +95,26 @@ export default {
         this.genres = response.data.genres
         this.api_key = response.data.api_key
         this.session_id = response.data.session_id
-        this.user_id = response.data.user_id
+        //this.user_id = response.data.user_id
         this.pages = response.data.pages
+      } catch (e) {
+        alert(e)
+      }
+    },
+
+    async fetchAR() {
+      try {
+        const response = await axios.get("http://localhost:8081/rec/ar/" + this.user_id + '/') // Поменять на this.user_id
+        this.movies_ar = response.data.data
+        if (this.movies_ar.length !== 0) {
+          for (let i = 0; i < this.movies_ar.length; i++) {
+            const ar_response = await axios.get("http://localhost:8081/movies/movie/" + this.movies_ar[i].movie_id + '/')
+            this.movies_ar[i].title = ar_response.data.title
+            this.movies_ar[i].year = ar_response.data.year
+
+            this.movies_ar[i].card_image = await this.getPicture(this.movies_ar[i].movie_id)
+          }
+        }
       } catch (e) {
         alert(e)
       }
@@ -105,6 +140,7 @@ export default {
                   this.movies = this.movies.filter(m => m.card_image !== "")
                 })
             )
+            this.fetchAR()
           }
       )
     },
@@ -147,5 +183,12 @@ export default {
 .pagination button:hover:not(.active) {
   background-color: #ddd;
   border-radius: 5px;
+}
+
+.row-title {
+  padding: 5px;
+  color: #ffffff;
+  font-size: 18px;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 </style>

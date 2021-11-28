@@ -1,7 +1,7 @@
 import os
 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "prs_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
 
 import django
 from django.db.models import Count
@@ -12,6 +12,10 @@ from datetime import date, timedelta
 from collections import defaultdict
 from collector.models import Log
 from analytics.models import Rating
+
+# Предупреждение локальной даты
+import warnings
+warnings.filterwarnings("ignore")
 
 # Веса для событий
 w1 = 100  # buy
@@ -90,7 +94,7 @@ def calculate_implicit_ratings_for_user(user_id):
 
 def save_ratings(ratings, user_id, type):
 
-    print("saving ratings for {}".format(user_id))
+    print("сохранение рейтингов для {}".format(user_id))
     i = 0
 
     for content_id, rating in ratings.items():
@@ -129,7 +133,7 @@ def calculate_ratings():
 
 
 if __name__ == '__main__':
-    print("Calculating implicit ratings...")
+    print("вычисление неявных рейтингов...")
 
     Rating.objects.filter(type='implicit').delete()
 

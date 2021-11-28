@@ -68,13 +68,19 @@ def detail(request, movie_id):
     api_key = get_api_key()
     movie = Movie.objects.filter(movie_id=movie_id).first()
     genre_names = []
+    title = ""
+    year = 0
 
     if movie is not None:
         movie_genres = movie.genres.all() if movie is not None else []
         genre_names = list(movie_genres.values('name'))
+        title = movie.title
+        year = movie.year
 
     context_dict = {'movie_id': movie_id,
                     'movie_genres': genre_names,
+                    'title': title,
+                    'year': year,
                     'api_key': api_key,
                     'session_id': session_id(request),
                     'user_id': user_id(request)}
@@ -119,6 +125,7 @@ def get_genres():
 
 
 def session_id(request):
+    print(request.session)
     if not "session_id" in request.session:
         request.session["session_id"] = str(uuid.uuid1())
 
