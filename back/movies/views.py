@@ -37,6 +37,13 @@ def index(request):
     return JsonResponse(context_dict, safe=False)
 
 
+def get_user_id(request):
+    context_dict = {
+        'user_id': user_id(request)
+    }
+    return JsonResponse(context_dict, safe=False)
+
+
 def handle_pagination(movies, page_number):
 
     paginate_by = 9

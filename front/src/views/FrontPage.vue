@@ -1,9 +1,22 @@
 <template>
   <div>
-    <div class="filmrow">
-      <film-card
-          v-for="movie in movies"
-          cardImage="movie.card_image" title="movie.title" genre="movie.genre"/>
+    <div class="film-row">
+        <film-card
+            v-for="movie in movies"
+            :title="movie.title"
+            :year="movie.year"
+            :card_image="movie.card_image"
+            v-bind:key="movie.movie_id"/>
+    </div>
+    <div class="film-row">
+      <div class="pagination" v-if="paginator.has_other_pages">
+        <button v-if="paginator.has_previous" @click="changePage(paginator.previous_page_number)">&laquo;</button>
+        <span v-for="i in pages" :key="i">
+          <button class="active" v-if="i === paginator.number">{{ i }}</button>
+          <button v-else @click="changePage(i)">{{ i }}</button>
+        </span>
+        <button v-if="paginator.has_next" @click="changePage(paginator.next_page_number)">&raquo;</button>
+      </div>
     </div>
   </div>
 
@@ -63,9 +76,9 @@ export default {
         this.paginator = response.data.paginator
         this.movies = response.data.movies
         this.genres = response.data.genres
-        this.apiKey = response.data.api_key
-        this.sessionId = response.data.session_id
-        this.userId = response.data.user_id
+        this.api_key = response.data.api_key
+        this.session_id = response.data.session_id
+        this.user_id = response.data.user_id
         this.pages = response.data.pages
       } catch (e) {
         alert(e)
@@ -75,19 +88,64 @@ export default {
     async getPicture(movie_id) {
       let url = 'https://api.themoviedb.org/3/find/tt' + movie_id + '?external_source=imdb_id&api_key=' + this.api_key
       const response = await axios.get(url)
-      this.movies.forEach(m => m.cardImage = "http://image.tmdb.org/t/p/w500/" + response.data.movie_results[0].poster_path)
+      let path = ""
+      if (response.data.movie_results && response.data.movie_results[0] && response.data.movie_results[0].poster_path) {
+        path = "http://image.tmdb.org/t/p/w185/" + response.data.movie_results[0].poster_path
+      }
+      return path
+    },
+
+    updateMovies() {
+      this.fetchData().then(
+          () => {
+            this.movies.forEach(
+                m => this.getPicture(m.movie_id).then(
+                    path => m.card_image = path
+                ).then(() => {
+                  this.movies = this.movies.filter(m => m.card_image !== "")
+                })
+            )
+          }
+      )
+    },
+
+    changePage(val) {
+      this.page = val
+      console.log(val)
+      this.updateMovies()
     }
 
   },
 
-  mounted() {
-    this.fetchData()
+  created() {
+    this.updateMovies()
   }
 }
 </script>
 
 <style>
-.filmrow {
+.film-row {
   display: flex;
+  flex-wrap: wrap;
+}
+.pagination {
+  display: inline-block;
+}
+.pagination button {
+  font-family: 'Roboto', serif;
+  font-size: large;
+  color: black;
+  float: left;
+  padding: 5px 12px;
+  text-decoration: none;
+}
+.pagination button.active {
+  background-color: #e3e331;
+  color: black;
+  border-radius: 5px;
+}
+.pagination button:hover:not(.active) {
+  background-color: #ddd;
+  border-radius: 5px;
 }
 </style>
