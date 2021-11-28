@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^movies/', include('movies.urls')),
     url(r'^collect/', include('collector.urls')),
-    url(r'^analytics/', include('analytics.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^rec/', include('recommender.urls'))
 ]
