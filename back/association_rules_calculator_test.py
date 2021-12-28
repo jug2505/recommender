@@ -1,6 +1,6 @@
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "prs_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
 
 import django
 django.setup()
@@ -10,8 +10,12 @@ from itertools import combinations
 from datetime import datetime
 
 from collector.models import Log
+from analytics.models import Rating
 from recommender.models import SeededRecs
 
+# Предупреждение локальной даты
+import warnings
+warnings.filterwarnings("ignore")
 
 def build_association_rules():
     data = retrieve_buy_events()
@@ -22,7 +26,7 @@ def build_association_rules():
 
 
 def retrieve_buy_events():
-    data = Log.objects.filter(event='buy').values()
+    data = Rating.objects.values()
     return data
 
 
@@ -30,10 +34,10 @@ def generate_transactions(data):
     transactions = dict()
 
     for transaction_item in data:
-        transaction_id = transaction_item["session_id"]
+        transaction_id = transaction_item["user_id"]
         if transaction_id not in transactions:
             transactions[transaction_id] = []
-        transactions[transaction_id].append(transaction_item["content_id"])
+        transactions[transaction_id].append(transaction_item["movie_id"])
 
     return transactions
 
@@ -123,5 +127,5 @@ def save_rules(rules):
 
 if __name__ == '__main__':
     print("Вычисление ассоциативных правил")
-
+    SeededRecs.objects.all().delete()
     build_association_rules()

@@ -1,12 +1,18 @@
 <template>
   <div class="logo">
-    <span>MovieRecs</span>
+    <span>{{modelValue}}</span>
   </div>
 </template>
 
 <script>
 export default {
   name: "Logo",
+  props: {
+    modelValue: {
+      type: String,
+      default: "MovieRecs"
+    }
+  },
   data () {
     return {}
   }

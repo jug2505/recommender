@@ -47,7 +47,7 @@ def get_association_rules_for(request, content_id, take=6):
 def recs_using_association_rules(request, user_id, take=6):
     """
     Возвращает для указанного пользователя user_id рекомендации на основе ассоциативных правил
-    {data: [ {'id': ..., 'confidence': ...}, ... ]}
+    {data: [ {'movie_id': ..., 'confidence': ...}, ... ]}
     """
     events = Log.objects.filter(user_id=user_id)\
                         .order_by('created')\
@@ -62,8 +62,8 @@ def recs_using_association_rules(request, user_id, take=6):
         .annotate(confidence=Avg('confidence')) \
         .order_by('-confidence')
 
-    recs = [{'id': '{0:07d}'.format(int(rule['target'])),
+    recs = [{'movie_id': '{0:07d}'.format(int(rule['target'])),
              'confidence': rule['confidence']} for rule in rules]
 
     print("Рекомендации на основе ассоциативных правил: \n{}".format(recs[:take]))
-    return JsonResponse(dict(data=list(recs[:take])))
+    return JsonResponse(dict(data=list(recs[:take])), safe=False)

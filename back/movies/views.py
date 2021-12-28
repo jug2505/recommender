@@ -29,18 +29,9 @@ def index(request):
     context_dict = {'movies': mov,
                     'paginator': paginator,
                     'api_key': api_key,
-                    'session_id': session_id(request),
-                    'user_id': user_id(request),
                     'pages': list(range(page_start, page_end)),
                     }
 
-    return JsonResponse(context_dict, safe=False)
-
-
-def get_user_id(request):
-    context_dict = {
-        'user_id': user_id(request)
-    }
     return JsonResponse(context_dict, safe=False)
 
 
@@ -68,26 +59,27 @@ def detail(request, movie_id):
     api_key = get_api_key()
     movie = Movie.objects.filter(movie_id=movie_id).first()
     genre_names = []
+    title = ""
+    year = 0
 
     if movie is not None:
         movie_genres = movie.genres.all() if movie is not None else []
         genre_names = list(movie_genres.values('name'))
+        title = movie.title
+        year = movie.year
 
     context_dict = {'movie_id': movie_id,
                     'movie_genres': genre_names,
-                    'api_key': api_key,
-                    'session_id': session_id(request),
-                    'user_id': user_id(request)}
+                    'title': title,
+                    'year': year,
+                    'api_key': api_key}
 
     return JsonResponse(context_dict, safe=False)
 
 
 def search_for_movie(request):
-
     search_term = request.GET.get('q', None)
-
     mov = Movie.objects.filter(title__startswith=search_term)
-
     api_key = get_api_key()
 
     context_dict = {
@@ -99,40 +91,11 @@ def search_for_movie(request):
     return JsonResponse(context_dict, safe=False)
 
 
-def dictfetchall(cursor):
-    """Returns all rows from a cursor as a dict"""
-    desc = cursor.description
-    return [
-        dict(zip([col[0] for col in desc], row))
-        for row in cursor.fetchall()
-        ]
-
-
 def get_api_key():
-    # Load credentials
+    # Ключ для themoviedb
     cred = json.loads(open(".rec").read())
     return cred['themoviedb_apikey']
 
 
 def get_genres():
     return Genre.objects.all().values('name').distinct()
-
-
-def session_id(request):
-    if not "session_id" in request.session:
-        request.session["session_id"] = str(uuid.uuid1())
-
-    return request.session["session_id"]
-
-
-def user_id(request):
-    user_id = request.GET.get("user_id")
-
-    if user_id:
-        request.session['user_id'] = user_id
-
-    if not "user_id" in request.session:
-        request.session['user_id'] = random.randint(10000000000, 90000000000)
-
-    print("ensured id: ", request.session['user_id'])
-    return request.session['user_id']
