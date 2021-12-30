@@ -1,10 +1,14 @@
+import operator
 from django.http import JsonResponse
-from django.db.models import Avg
+from django.db.models import Avg, Count
 
 from movies.models import Movie
 from recs.popularity_recommender import PopularityBasedRecs
 from recommender.models import SeededRecs
 from collector.models import Log
+from analytics.models import Rating
+
+from back.recommender.similarity import jaccard, pearson
 
 
 def chart(request, take=10):
@@ -67,3 +71,43 @@ def recs_using_association_rules(request, user_id, take=6):
 
     print("Рекомендации на основе ассоциативных правил: \n{}".format(recs[:take]))
     return JsonResponse(dict(data=list(recs[:take])), safe=False)
+
+
+def similar_users(request, user_id, sim_method):
+    minimum_intersect = request.GET.get('min', 1)
+
+    ratings = Rating.objects.filter(user_id=user_id)
+    intersected_users = Rating.objects.filter(movie_id__in=ratings.values('movie_id')) \
+        .values('user_id') \
+        .annotate(intersect=Count('user_id')).filter(intersect__gt=minimum_intersect)
+
+    dataset = Rating.objects.filter(user_id__in=intersected_users.values('user_id'))
+
+    users = {u['user_id']: {} for u in intersected_users}
+
+    for row in dataset:
+        if row.user_id in users.keys():
+            users[row.user_id][row.movie_id] = row.rating
+
+    similarity_dict = dict()
+
+    for user in intersected_users:
+        s = 0.0
+        if sim_method == 'jaccard':
+            s = jaccard(users, user_id, user['user_id'])
+        if sim_method == 'pearson':
+            s = pearson(users, user_id, user['user_id'])
+
+        if s > 0.2:
+            similarity_dict[user['user_id']] = round(s, 2)
+    top_n = sorted(similarity_dict.items(), key=operator.itemgetter(1), reverse=True)[:10]
+
+    data = {
+        'user_id': user_id,
+        'num_movies_rated': len(ratings),
+        'type': sim_method,
+        'top_n': top_n,
+        'similarity': top_n,
+    }
+
+    return JsonResponse(data, safe=False)
