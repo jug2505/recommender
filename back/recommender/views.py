@@ -3,12 +3,12 @@ from django.http import JsonResponse
 from django.db.models import Avg, Count
 
 from movies.models import Movie
-from recs.popularity_recommender import PopularityBasedRecs
+from models.popularity_recommender import PopularityBasedRecs
 from recommender.models import SeededRecs
 from collector.models import Log
 from analytics.models import Rating
 
-from back.recommender.similarity import jaccard, pearson
+from recommender.similarity import jaccard, pearson
 
 
 def chart(request, take=10):
