@@ -11,6 +11,9 @@ media
 # Backup files #
 *.bak
 
+# Images
+*.png
+
 # MovieDB api key
 .rec
 
