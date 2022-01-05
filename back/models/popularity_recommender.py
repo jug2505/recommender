@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from analytics.models import Rating
 from collector.models import Log
-from recs.base_recommender import BaseRecommender
+from models.base_recommender import BaseRecommender
 from django.db.models import Count
 from django.db.models import Q  # Фильтр, возвращающий QuerySet
 from django.db.models import Avg

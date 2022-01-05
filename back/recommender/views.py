@@ -4,6 +4,7 @@ from django.db.models import Avg, Count
 
 from movies.models import Movie
 from models.popularity_recommender import PopularityBasedRecs
+from models.neighborhood_based_recommender import NeighborhoodBasedRecs
 from recommender.models import SeededRecs
 from collector.models import Log
 from analytics.models import Rating
@@ -108,6 +109,19 @@ def similar_users(request, user_id, sim_method):
         'type': sim_method,
         'top_n': top_n,
         'similarity': top_n,
+    }
+
+    return JsonResponse(data, safe=False)
+
+
+def recs_cf(request, user_id, num=6):
+    min_sim = request.GET.get('min_sim', 0.1)
+    sorted_items = NeighborhoodBasedRecs(min_sim=min_sim).recommend_items(user_id, num)
+
+    print(f"cf sorted_items is: {sorted_items}")
+    data = {
+        'user_id': user_id,
+        'data': sorted_items
     }
 
     return JsonResponse(data, safe=False)
