@@ -14,6 +14,8 @@ media
 # Images
 *.png
 
+*.csv
+
 # MovieDB api key
 .rec
 
