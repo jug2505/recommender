@@ -7,5 +7,5 @@ class BaseRecommender(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def recommend_items(self, user_id, num=6):
+    def recommend_items(self, user_id, num=10):
         pass

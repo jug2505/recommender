@@ -5,10 +5,9 @@ from tqdm import tqdm
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rs_project.settings')
 
 import django
-
 django.setup()
 
-from movies.models import Movie, Genre
+from recommender.models import Movie, Genre
 
 
 def save_movie(movie_id, title, genres):
@@ -24,11 +23,10 @@ def save_movie(movie_id, title, genres):
             g.save()
 
     movie.save()
-
     return movie
 
 
-def populate():
+def download():
     movies = urllib.request.urlopen('https://raw.githubusercontent.com/sidooms/MovieTweetings/master/latest/movies.dat').read().decode('utf-8')
     for movie in tqdm(movies.split(sep="\n")):
         m = movie.split(sep="::")
@@ -41,4 +39,4 @@ if __name__ == '__main__':
     # Очистка БД
     Movie.objects.all().delete()
     Genre.objects.all().delete()
-    populate()
+    download()

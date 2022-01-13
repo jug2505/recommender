@@ -13,7 +13,7 @@ def ratings_distribution():
     cursor = connection.cursor()
     cursor.execute("""
     select rating
-    from analytics_rating
+    from rating
     order by rating
     """)
 
@@ -22,7 +22,7 @@ def ratings_distribution():
     plt.hist(data, color='#53868B', bins=11)
     plt.title('Распределение рейтингов')
     plt.xlabel('Рейтинг')
-    plt.show()
+    plt.savefig("statistics/ratings_distribution.png")
 
 
 def main():

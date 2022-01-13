@@ -6,10 +6,9 @@ import decimal
 from tqdm import tqdm
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rs_project.settings')
-
 django.setup()
 
-from analytics.models import Rating
+from recommender.models import Rating
 
 # Предупреждение локальной даты
 import warnings
@@ -17,13 +16,12 @@ warnings.filterwarnings("ignore")
 
 
 def save_rating(user_id, movie_id, rating, timestamp):
-    rating = Rating(user_id=user_id, movie_id=movie_id, rating=decimal.Decimal(rating),
-                    rating_timestamp=datetime.datetime.fromtimestamp(float(timestamp)))
+    rating = Rating(user_id=user_id, movie_id=movie_id, rating=decimal.Decimal(rating), rating_timestamp=datetime.datetime.fromtimestamp(float(timestamp)))
     rating.save()
     return rating
 
 
-def populate():
+def download():
     Rating.objects.all().delete()  # Очистка БД
     # Скачивание рейтинга
     ratings = urllib.request.urlopen('https://raw.githubusercontent.com/sidooms/MovieTweetings/master/latest/ratings.dat').read().decode('utf-8')
@@ -34,5 +32,5 @@ def populate():
 
 
 if __name__ == '__main__':
-    print("Запуск скрипта загрузки рейтинго в БД")
-    populate()
+    print("Запуск скрипта загрузки рейтингов в БД")
+    download()
