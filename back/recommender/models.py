@@ -1,37 +1,42 @@
 from django.db import models
 
-
-class MovieDescriptions(models.Model):
+class Rating(models.Model):
+    user_id = models.CharField(max_length=16)
     movie_id = models.CharField(max_length=16)
-    imdb_id = models.CharField(max_length=16)
+    rating = models.DecimalField(decimal_places=2, max_digits=4)
+    rating_timestamp = models.DateTimeField()
+
+    class Meta:
+        db_table = 'rating'
+
+    def __str__(self):
+        return "user_id: {}, movie_id: {}, rating: {}".format(self.user_id, self.movie_id, self.rating)
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=64)
+
+    class Meta:
+        db_table = 'genre'
+
+    def __str__(self):
+        return self.name
+
+
+class Movie(models.Model):
+    movie_id = models.CharField(max_length=16, unique=True, primary_key=True)
     title = models.CharField(max_length=512)
-    description = models.CharField(max_length=1024)
-    genres = models.CharField(max_length=512, default='')
-    lda_vector = models.CharField(max_length=56, null=True)
-    sim_list = models.CharField(max_length=512, default='')
+    year = models.IntegerField(null=True)
+    genres = models.ManyToManyField(Genre, related_name='movies', db_table='movie_genre')
 
     class Meta:
-        db_table = 'movie_description'
+        db_table = 'movie'
 
     def __str__(self):
-        return "{}: {}".format(self.imdb_id, self.title)
-
-
-class LdaSimilarity(models.Model):
-    created = models.DateField()
-    source = models.CharField(max_length=16, db_index=True)
-    target = models.CharField(max_length=16)
-    similarity = models.DecimalField(max_digits=8, decimal_places=7)
-
-    class Meta:
-        db_table = 'lda_similarity'
-
-    def __str__(self):
-        return "[({} => {}) sim = {}]".format(self.source, self.target, self.similarity)
+        return self.title
 
 
 class Similarity(models.Model):
-    created = models.DateField()
     source = models.CharField(max_length=16, db_index=True)
     target = models.CharField(max_length=16)
     similarity = models.DecimalField(max_digits=8, decimal_places=7)
@@ -44,29 +49,13 @@ class Similarity(models.Model):
 
 
 class SeededRecs(models.Model):
-    created = models.DateTimeField()
     source = models.CharField(max_length=16)
     target = models.CharField(max_length=16)
     support = models.DecimalField(max_digits=10, decimal_places=8)
     confidence = models.DecimalField(max_digits=10, decimal_places=8)
-    type = models.CharField(max_length=8)
 
     class Meta:
         db_table = 'seeded_recs'
 
     def __str__(self):
-        return "[({} => {}) s = {}, c= {}]".format(self.source, self.target, self.support, self.confidence)
-
-
-class Recs(models.Model):
-
-    user = models.CharField(max_length=16)
-    item = models.CharField(max_length=16)
-    rating = models.FloatField()
-    type = models.CharField(max_length=16)
-
-    class Meta:
-        db_table = 'recs'
-
-    def __str__(self):
-        return "(u,i, t)({}, {}, {})= {}".format(self.user, self.item, self.type, self.rating)
+        return "[({} => {}) support = {}, confidence = {}]".format(self.source, self.target, self.support, self.confidence)
