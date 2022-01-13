@@ -58,7 +58,7 @@ class Precision:
         self.K = k
         self.rec = recommender
 
-    def calculate_mean_average_precision(self, train_ratings, test_ratings):
+    def calculate(self, train_ratings, test_ratings):
         total_precision_score = Decimal(0.0)
         total_recall_score = Decimal(0.0)
 
