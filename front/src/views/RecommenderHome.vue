@@ -1,6 +1,6 @@
 <template>
   <div class="recommender-home">
-    <base-header/>
+    <base-header :user_id="user_id"/>
     <div class="body">
       <router-view/>
     </div>
@@ -17,6 +17,7 @@ export default {
   components: { BaseFooter, BaseHeader },
   data () {
     return {
+      user_id: "Не задан"
     }
   }
 }

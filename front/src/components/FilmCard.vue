@@ -1,4 +1,7 @@
 <template>
+  <router-link
+    :to="{ name: 'Movie info', params: { id: id } }"
+    style="text-decoration: none; color: inherit;">
   <div class="card">
     <img :src="card_image" :alt="'img: ' + title">
     <div class="info">
@@ -8,6 +11,7 @@
       </div>
     </div>
   </div>
+  </router-link>
 </template>
 
 <script>

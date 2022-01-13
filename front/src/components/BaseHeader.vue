@@ -10,9 +10,7 @@
       <search-bar/>
     </div>
     <div class="right">
-      <user-button
-      :user_id="user_id"
-      />
+      <user-button/>
       <profile-button/>
     </div>
   </div>
@@ -24,29 +22,10 @@ import SearchBar from "./UI/SearchBar";
 import ProfileButton from "./UI/ProfileButton";
 import Logo from "./Logo";
 import UserButton from "./UI/UserButton";
-import axios from "axios";
 
 export default {
   name: "BaseHeader",
   components: {HeaderButton, SearchBar, ProfileButton, Logo, UserButton},
-  data () {
-    return {
-      user_id: ""
-    }
-  },
-  methods: {
-    async fetchData(){
-      try {
-        const response = await axios.get("http://localhost:8081/movies/userinfo/")
-        this.user_id = response.data.user_id
-      } catch (e) {
-        alert(e)
-      }
-    }
-  },
-  mounted() {
-    this.fetchData()
-  }
 }
 </script>
 

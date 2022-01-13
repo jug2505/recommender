@@ -1,10 +1,10 @@
 <template>
-  <h1>FilmInfo</h1>
+  <h1>MovieInfo</h1>
 </template>
 
 <script>
 export default {
-  name: "FilmInfo"
+  name: "MovieInfo"
 }
 </script>
 
