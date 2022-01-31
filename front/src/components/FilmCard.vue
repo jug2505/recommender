@@ -18,6 +18,10 @@
 export default {
   name: "FilmCard",
   props: {
+    id: {
+      type: String,
+      default: ""
+    },
     card_image: {
       type: String,
       default: ""
@@ -44,8 +48,8 @@ export default {
   font-family: 'Roboto', serif;
   display: flex;
   flex-direction: column;
-  width: 185px; /*315*/
-  height: 350px; /*200*/
+  width: 150px; /*185px*/
+  height: 310px; /*350px*/
   color: white;
   margin-right: 5px;
 }
@@ -62,6 +66,7 @@ export default {
 
 .name {
   font-weight: 700;
+  font-size: small;
 }
 
 .genre {

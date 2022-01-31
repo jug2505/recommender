@@ -16,7 +16,7 @@ from recommender.models import Rating
 
 class SimilarityMatrixBuilder:
 
-    def __init__(self, min_overlap=15, min_sim=0.2):
+    def __init__(self, min_overlap=5, min_sim=0.1):
         self.min_overlap = min_overlap
         self.min_sim = min_sim
 
@@ -89,7 +89,7 @@ def normalize(x):
 
 
 def load_all_ratings(min_ratings=1):
-    columns = ['user_id', 'movie_id', 'rating', 'type']
+    columns = ['user_id', 'movie_id', 'rating']
     ratings_data = Rating.objects.all().values(*columns)
     ratings = pd.DataFrame.from_records(ratings_data, columns=columns)
     user_count = ratings[['user_id', 'movie_id']].groupby('user_id').count()
@@ -103,7 +103,7 @@ def load_all_ratings(min_ratings=1):
 def main():
     print("Вычисление схожести элементов")
     all_ratings = load_all_ratings()
-    SimilarityMatrixBuilder(min_overlap=20, min_sim=0.0).build(all_ratings)
+    SimilarityMatrixBuilder(min_overlap=5, min_sim=0.01).build(all_ratings)
 
 
 if __name__ == '__main__':

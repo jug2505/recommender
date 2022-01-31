@@ -237,7 +237,7 @@ def ensure_dir(file_path):
 
 
 def load_all_ratings(min_ratings=1):
-    columns = ['user_id', 'movie_id', 'rating', 'type', 'rating_timestamp']
+    columns = ['user_id', 'movie_id', 'rating', 'rating_timestamp']
 
     ratings_data = Rating.objects.all().values(*columns)
     ratings = pd.DataFrame.from_records(ratings_data, columns=columns)
@@ -262,7 +262,7 @@ if __name__ == '__main__':
     print("Вычисление матричной факторизации")
 
     MF = MatrixFactorization(save_path='./models/SVD/model/', max_iterations=40)
-    loaded_ratings = load_all_ratings(20)
+    loaded_ratings = load_all_ratings(10)
     print("using {} ratings".format(loaded_ratings.shape[0]))
     MF.train(load_all_ratings(), k=20)
     print("Вычисление матричной факторизации завершено")
