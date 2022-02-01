@@ -1,5 +1,7 @@
+from itertools import count
 import operator
 import json
+import secrets
 
 from django.http import JsonResponse
 from django.db.models import Avg, Count
@@ -19,6 +21,10 @@ def get_movies_by_user(request, user_id):
     ratings = Rating.objects.filter(user_id=user_id).order_by('-rating').values('movie_id', 'rating')
     data = {'data': list(ratings), 'api_key': get_api_key()}
     return JsonResponse(data, safe=False)
+
+def get_users(request, num):
+    users = Rating.objects.values("user_id").order_by("user_id").annotate(count=Count("user_id")).filter(count=num)
+    return JsonResponse(secrets.choice(list(users)), safe=False)
 
 def detail(request, movie_id):
     api_key = get_api_key()
