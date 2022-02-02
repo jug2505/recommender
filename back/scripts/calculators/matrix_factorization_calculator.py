@@ -261,8 +261,8 @@ if __name__ == '__main__':
     print('SVD')
     print("Вычисление матричной факторизации")
 
-    MF = MatrixFactorization(save_path='./models/SVD/model/', max_iterations=40)
+    MF = MatrixFactorization(save_path='./models/SVD/model/', max_iterations=10)
     loaded_ratings = load_all_ratings(10)
     print("using {} ratings".format(loaded_ratings.shape[0]))
-    MF.train(load_all_ratings(), k=20)
+    MF.train(load_all_ratings(), k=10)
     print("Вычисление матричной факторизации завершено")

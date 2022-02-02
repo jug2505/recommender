@@ -10,6 +10,7 @@ from recommender.models import Movie, Genre, SeededRecs, Rating
 from scripts.recommenders.rating_recommender import RatingRecommender
 from scripts.recommenders.collaborative_recommender import CollaborativeRecommender
 from scripts.recommenders.svd_recommender import SVDRecommender
+from scripts.recommenders.knn_recommender import KNNRecommender
 
 
 def get_api_key():
@@ -92,5 +93,15 @@ def recs_by_svd(request, user_id, num=10):
     data = {
         'user_id': user_id,
         'data': SVDRecommender().recommend_items(user_id, num)
+    }
+    return JsonResponse(data, safe=False)
+
+def recs_by_knn(request, user_id, num=10):
+    """
+    {"user_id": ..., "data": [{ "movie_id": ... , "prediction": ... }, ... ]}
+    """
+    data = {
+        'user_id': user_id,
+        'data': KNNRecommender().recommend_items(user_id, num)
     }
     return JsonResponse(data, safe=False)
