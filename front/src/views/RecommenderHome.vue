@@ -27,6 +27,7 @@ export default {
   background-color: #343434;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
   /*height: 100vh; /* Убрать, когда будет много контента */
 }
 .body {

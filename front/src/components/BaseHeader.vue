@@ -10,7 +10,10 @@
       <search-bar/>
     </div>
     <div class="right">
-      <user-button/>
+      <router-link :to="{ name: 'User pick' }">
+        <user-button/>
+      </router-link>
+      
       <profile-button/>
     </div>
   </div>

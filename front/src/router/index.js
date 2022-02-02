@@ -2,10 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import FrontPage from "../views/FrontPage"
 import About from "../views/About";
 import MovieInfo from "../views/MovieInfo";
+import UserPick from "../views/UserPick";
 
 const routes = [
   {
-    path: '/',
+    path: '/stat',
     name: 'Front page',
     component: FrontPage
   },
@@ -19,6 +20,11 @@ const routes = [
     name: 'Movie info',
     component: MovieInfo
   },
+  {
+    path: '/',
+    name: 'User pick',
+    component: UserPick
+  }
 ]
 
 const router = createRouter({
