@@ -35,6 +35,20 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+class MovieDescriptions(models.Model):
+    movie_id = models.CharField(max_length=16)
+    title = models.CharField(max_length=512)
+    description = models.CharField(max_length=1024)
+
+    lda_vector = models.CharField(max_length=56, null=True)
+    sim_list = models.CharField(max_length=512, default='')
+
+    class Meta:
+        db_table = 'movie_description'
+
+    def __str__(self):
+        return "{}: {}".format(self.movie_id, self.title)
+
 
 class Similarity(models.Model):
     source = models.CharField(max_length=16, db_index=True)
@@ -43,6 +57,18 @@ class Similarity(models.Model):
 
     class Meta:
         db_table = 'similarity'
+
+    def __str__(self):
+        return "[({} => {}) sim = {}]".format(self.source, self.target, self.similarity)
+
+
+class DescriptionSimilarity(models.Model):
+    source = models.CharField(max_length=32, db_index=True)
+    target = models.CharField(max_length=32)
+    similarity = models.DecimalField(max_digits=8, decimal_places=7)
+
+    class Meta:
+        db_table = 'description_similarity'
 
     def __str__(self):
         return "[({} => {}) sim = {}]".format(self.source, self.target, self.similarity)

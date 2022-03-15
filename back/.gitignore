@@ -16,6 +16,8 @@ media
 
 /models
 *.csv
+*.lda
+*lda.index.npy
 
 # MovieDB api key
 .rec

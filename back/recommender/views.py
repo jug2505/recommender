@@ -11,6 +11,8 @@ from scripts.recommenders.rating_recommender import RatingRecommender
 from scripts.recommenders.collaborative_recommender import CollaborativeRecommender
 from scripts.recommenders.svd_recommender import SVDRecommender
 from scripts.recommenders.knn_recommender import KNNRecommender
+from scripts.recommenders.content_based_recommender import ContentBasedRecommender
+from scripts.recommenders.hybrid_recommender import HybridRecommender
 
 
 def get_api_key():
@@ -103,5 +105,19 @@ def recs_by_knn(request, user_id, num=10):
     data = {
         'user_id': user_id,
         'data': KNNRecommender().recommend_items(user_id, num)
+    }
+    return JsonResponse(data, safe=False)
+
+def recs_by_content(request, user_id, num=6):
+    data = {
+        'user_id': user_id,
+        'data': ContentBasedRecommender().recommend_items(user_id, num)
+    }
+    return JsonResponse(data, safe=False)
+
+def recs_by_hybrid(request, user_id, num=6):
+    data = {
+        'user_id': user_id,
+        'data': HybridRecommender().recommend_items(user_id, num)
     }
     return JsonResponse(data, safe=False)

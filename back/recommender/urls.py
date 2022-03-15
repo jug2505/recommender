@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^pop/user/(?P<user_id>\w+)/$', views.recs_by_popularity, name='recs_by_popularity'),
     url(r'^cf/user/(?P<user_id>\w+)/$', views.recs_by_collaborative_filtering, name='recs_by_collaborative_filtering'),
     url(r'^svd/user/(?P<user_id>\w+)/$', views.recs_by_svd, name='recs_by_svd'),
+    url(r'^content/user/(?P<user_id>\w+)/$', views.recs_by_content, name='recs_by_content'),
+    url(r'^hybrid/user/(?P<user_id>\w+)/$', views.recs_by_hybrid, name='recs_by_hybrid'),
     
 ]
