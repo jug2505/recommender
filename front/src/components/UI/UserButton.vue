@@ -1,18 +1,12 @@
 <template>
   <div class="user-button">
-    <button class="text">id: {{user_id}}</button>
+    <button class="text">id: {{$store.state.user_id}}</button>
   </div>
 </template>
 
 <script>
 export default {
   name: "UserButton",
-  props: {
-    user_id : {
-      type: String,
-      default: ""
-    }
-  }
 }
 </script>
 

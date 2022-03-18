@@ -4,17 +4,20 @@ import pandas as pd
 import time
 from decimal import Decimal
 from sklearn.model_selection import KFold
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
+import django
+django.setup()
+
+from scripts.recommenders.knn_recommender import KNNRecommender
+from scripts.recommenders.content_based_recommender import ContentBasedRecommender
 from scripts.statistics.metrics import Precision, RMSE
 from scripts.recommenders.rating_recommender import RatingRecommender
 from scripts.recommenders.collaborative_recommender import CollaborativeRecommender
 from scripts.recommenders.svd_recommender import SVDRecommender
 from scripts.calculators.matrix_factorization_calculator import MatrixFactorization
 from scripts.calculators.collaborative_calculator import SimilarityMatrixBuilder
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
-import django
-django.setup()
-
+from scripts.recommenders.hybrid_recommender import HybridRecommender
 from recommender.models import Rating
 
 
@@ -200,7 +203,7 @@ def precision_of_svd_recommender():
             file.flush()
 
 
-def rmse_of_collaborative_recommender():
+def rmse_of_svd_recommender():
     print('RMSE SVDRecommender')
 
     min_number_of_ratings = 20
@@ -215,7 +218,89 @@ def rmse_of_collaborative_recommender():
         rmse = Evaluator(builder, recommender, params={'k': 20, 'save_path': save_path + 'model/'}).calculate_rsme(min_number_of_ratings, min_rank)
         file.write("{}, {}, {}\n".format(rmse, min_number_of_ratings, min_rank))
 
+def precision_of_content_recommender():
+    print('Точность по К ContentBasedRecommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    
+    file_name = '{}-precision-content.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("ar, map, K, min_num_of_ratings, min_rank\n")
+        for k in np.arange(0, 20, 2):
+            recommender = ContentBasedRecommender()
+            result = Evaluator(None, recommender).calculate_pricision(min_number_of_ratings, min_rank, k)
+            file.write("{}, {}, {}, {}, {}\n".format(result['ar'], result['map'], k, min_number_of_ratings, min_rank))
+            file.flush()
+
+
+def rmse_of_content_recommender():
+    print('RMSE ContentRecommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    file_name = '{}-RMSE-content.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("rmse, min_num_of_ratings, min_rank\n")
+        rmse = Evaluator(None, ContentBasedRecommender()).calculate_rsme(min_number_of_ratings, min_rank)
+        file.write("{}, {}, {}\n".format(rmse, min_number_of_ratings, min_rank))
+
+def precision_of_knn_recommender():
+    print('Точность по К KNNRecommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    file_name = '{}-precision-knn.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("ar, map, K, min_num_of_ratings, min_rank\n")
+        for k in np.arange(0, 20, 2):
+            recommender = KNNRecommender()
+            result = Evaluator(None, recommender).calculate_pricision(min_number_of_ratings, min_rank, k)
+            file.write("{}, {}, {}, {}, {}\n".format(result['ar'], result['map'], k, min_number_of_ratings, min_rank))
+            file.flush()
+
+def rmse_of_knn_recommender():
+    print('RMSE KNNRecommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    file_name = '{}-RMSE-knn.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("rmse, min_num_of_ratings, min_rank\n")
+        rmse = Evaluator(None, KNNRecommender()).calculate_rsme(min_number_of_ratings, min_rank)
+        file.write("{}, {}, {}\n".format(rmse, min_number_of_ratings, min_rank))
+
+def precision_of_hybrid_recommender():
+    print('Точность по К HybridRecommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    file_name = '{}-precision-hybrid.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("ar, map, K, min_num_of_ratings, min_rank\n")
+        for k in np.arange(0, 20, 2):
+            recommender = HybridRecommender()
+            result = Evaluator(None, recommender).calculate_pricision(min_number_of_ratings, min_rank, k)
+            file.write("{}, {}, {}, {}, {}\n".format(result['ar'], result['map'], k, min_number_of_ratings, min_rank))
+            file.flush()
+
+def rmse_of_hybrid_recommender():
+    print('RMSE Hybrid Recommender')
+
+    min_number_of_ratings = 10
+    min_rank = 5
+    file_name = '{}-RMSE-hybrid.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
+
+    with open(file_name, 'a', 1) as file:
+        file.write("rmse, min_num_of_ratings, min_rank\n")
+        rmse = Evaluator(None, HybridRecommender()).calculate_rsme(min_number_of_ratings, min_rank)
+        file.write("{}, {}, {}\n".format(rmse, min_number_of_ratings, min_rank))
 
 if __name__ == '__main__':
-    precision_of_rating_recommender()
-        
+    rmse_of_hybrid_recommender()
+ 

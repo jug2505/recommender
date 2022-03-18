@@ -1,37 +1,53 @@
 <template>
-  <div>
+  <div class="front-page">
     <div class="film-row">
         <film-card
             v-for="movie in movies"
+            :id="movie.movie_id"
             :title="movie.title"
             :year="movie.year"
             :card_image="movie.card_image"
             v-bind:key="movie.movie_id"/>
     </div>
-
-    <div class="film-row">
-      <div class="pagination" v-if="paginator.has_other_pages">
-        <button v-if="paginator.has_previous" @click="changePage(paginator.previous_page_number)">&laquo;</button>
-        <span v-for="i in pages" :key="i">
-          <button class="active" v-if="i === paginator.number">{{ i }}</button>
-          <button v-else @click="changePage(i)">{{ i }}</button>
-        </span>
-        <button v-if="paginator.has_next" @click="changePage(paginator.next_page_number)">&raquo;</button>
-      </div>
-    </div>
-
-    <div v-if="movies_ar.length !== 0" class="row-title">
-      Рекомендации на основе ассоциативных правил
+    
+    <div v-if="pop_movies.length !== 0" class="row-title">
+      Рекомендации на основе популярности
     </div>
     <div class="film-row">
       <film-card
-          v-for="movie in movies_ar"
+          v-for="movie in pop_movies"
+          :id="movie.movie_id"
           :title="movie.title"
           :year="movie.year"
           :card_image="movie.card_image"
           v-bind:key="movie.movie_id"/>
     </div>
 
+    <div v-if="cf_movies.length !== 0" class="row-title">
+      Рекомендации на основе коллаборативной фильтрации
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in cf_movies"
+          :id="movie.movie_id"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
+
+    <div v-if="svd_movies.length !== 0" class="row-title">
+      Рекомендации на основе SVD
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in svd_movies"
+          :id="movie.movie_id"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
   </div>
 
 </template>
@@ -41,125 +57,116 @@ import FilmCard from "../components/FilmCard";
 import store from '../store'
 import axios from 'axios';
 
+let API_URL = 'http://localhost:8081'
+
 export default {
   name: "FrontPage",
   components: {FilmCard},
 
   data () {
     return {
-      page: 1,
       movies: [],
-      paginator: {
-        has_other_pages: false,
-        has_previous: false,
-        has_next: false,
-        previous_page_number: 1,
-        next_page_number: 1,
-        number: 1
-      },
-      genres: [],
+      pop_movies: [],
+      cf_movies: [],
+      svd_movies: [],
       api_key: "",
-      session_id: "",
-      user_id: store.state.user_id,
-      pages: [],
-
-      movies_ar: []
     }
-  },
-
-  methods: {
-    add_impression(user_id, event_type, content_id, session_id) {
-      try {
-        axios.post("http://localhost:8081/collect/log/", {
-          params: {
-            "event_type": event_type,
-            "user_id": user_id,
-            "content_id": content_id,
-            "session_id": session_id
-          }
-        })
-      } catch (e) {
-        alert(e)
-      }
-    },
-
-    async fetchData() {
-      try {
-        const response = await axios.get("http://localhost:8081/movies/", {
-          params: {
-            page: this.page
-          }
-        })
-        this.paginator = response.data.paginator
-        this.movies = response.data.movies
-        this.genres = response.data.genres
-        this.api_key = response.data.api_key
-        this.session_id = response.data.session_id
-        //this.user_id = response.data.user_id
-        this.pages = response.data.pages
-      } catch (e) {
-        alert(e)
-      }
-    },
-
-    async fetchAR() {
-      try {
-        const response = await axios.get("http://localhost:8081/rec/ar/" + this.user_id + '/') // Поменять на this.user_id
-        this.movies_ar = response.data.data
-        if (this.movies_ar.length !== 0) {
-          for (let i = 0; i < this.movies_ar.length; i++) {
-            const ar_response = await axios.get("http://localhost:8081/movies/movie/" + this.movies_ar[i].movie_id + '/')
-            this.movies_ar[i].title = ar_response.data.title
-            this.movies_ar[i].year = ar_response.data.year
-
-            this.movies_ar[i].card_image = await this.getPicture(this.movies_ar[i].movie_id)
-          }
-        }
-      } catch (e) {
-        alert(e)
-      }
-    },
-
-    async getPicture(movie_id) {
-      let url = 'https://api.themoviedb.org/3/find/tt' + movie_id + '?external_source=imdb_id&api_key=' + this.api_key
-      const response = await axios.get(url)
-      let path = ""
-      if (response.data.movie_results && response.data.movie_results[0] && response.data.movie_results[0].poster_path) {
-        path = "http://image.tmdb.org/t/p/w185/" + response.data.movie_results[0].poster_path
-      }
-      return path
-    },
-
-    updateMovies() {
-      this.fetchData().then(
-          () => {
-            this.movies.forEach(
-                m => this.getPicture(m.movie_id).then(
-                    path => m.card_image = path
-                ).then(() => {
-                  this.movies = this.movies.filter(m => m.card_image !== "")
-                })
-            )
-            this.fetchAR()
-          }
-      )
-    },
-
-    changePage(val) {
-      this.page = val
-      console.log(val)
-      this.updateMovies()
-    }
-
   },
 
   created() {
-    this.updateMovies()
-  }
+    this.getWatched()
+    this.getPopRecs()
+    this.getCFRecs()
+    this.getSVDRecs()
+  },
+  methods: {
+
+    getWatched(){
+      axios
+        .get(API_URL + "/rec/movie/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            this.movies = response.data.data
+            this.api_key = response.data.api_key
+            this.getMoviePosters(this.movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getPopRecs(){
+      axios
+        .get(API_URL + "/rec/pop/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            this.pop_movies = response.data.data
+            this.getMoviePosters(this.pop_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getCFRecs(){
+      axios
+        .get(API_URL + "/rec/cf/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            response.data.data.forEach(element => {
+              this.cf_movies.push({movie_id: element[0], prediction: element[1].prediction})
+            });
+            this.getMoviePosters(this.cf_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getSVDRecs(){
+      axios
+        .get(API_URL + "/rec/svd/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            response.data.data.forEach(element => {
+              this.svd_movies.push({movie_id: element[0], prediction: element[1].prediction})
+            });
+            
+            //this.svd_movies = response.data.data
+            this.getMoviePosters(this.svd_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getMoviePosters(movies) {
+      if (movies.length !== 0) {
+        for (let i = 0; i < movies.length; i++) {
+          axios
+            .get(API_URL + "/rec/movie/" + movies[i].movie_id + "/")
+            .then(
+              (info_responce) => {
+                movies[i].title = info_responce.data.title
+                movies[i].year = info_responce.data.year
+
+                axios
+                  .get('https://api.themoviedb.org/3/find/tt' + movies[i].movie_id + '?external_source=imdb_id&api_key=' + this.api_key)
+                  .then(
+                    (image_responce) => {
+                      let path = ""
+                      if (image_responce.data.movie_results && image_responce.data.movie_results[0] && image_responce.data.movie_results[0].poster_path) {
+                        path = "http://image.tmdb.org/t/p/w185/" + image_responce.data.movie_results[0].poster_path
+                      }
+                      movies[i].card_image = path
+                  })
+                  .catch((error) => { console.log(error) })
+            })
+            .catch((error) => { console.log(error) })
+        }
+      }
+    }
+  },
 }
 </script>
 
 <style>
+.front-page {
+    width: 1024px;
+    margin: 0 auto;
+}
 .film-row {
   display: flex;
   flex-wrap: wrap;

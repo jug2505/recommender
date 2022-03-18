@@ -43,10 +43,12 @@ export default {
   font-family: 'Roboto Condensed', serif;
   font-size: 18px;
   color: #cacaca;
+
   margin-top: auto;
   background-color: #232323;
   border-top: 2px solid #545454;
   padding: 70px 0;
+  
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;

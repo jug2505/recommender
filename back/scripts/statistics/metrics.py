@@ -1,6 +1,8 @@
 import os
-
+from scripts.recommenders.content_based_recommender import ContentBasedRecommender
+from scripts.recommenders.knn_recommender import KNNRecommender
 from scripts.recommenders.svd_recommender import SVDRecommender
+from scripts.recommenders.hybrid_recommender import HybridRecommender
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
 import django
@@ -36,7 +38,7 @@ class RMSE:
                 for item_id in movie_ids:
                     actual_rating = this_test_ratings[this_test_ratings['movie_id'] == item_id].iloc[0]['rating']
                     
-                    if isinstance(self.recommender, SVDRecommender):
+                    if isinstance(self.recommender, SVDRecommender) or isinstance(self.recommender, KNNRecommender) or isinstance(self.recommender, ContentBasedRecommender) or isinstance(self.recommender, HybridRecommender):
                         predicted_rating = self.recommender.predict_score(user_id, item_id)
                     else:
                         predicted_rating = self.recommender.predict_score_by_ratings(item_id, movies)
