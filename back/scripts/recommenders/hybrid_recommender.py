@@ -23,12 +23,12 @@ class HybridRecommender(BaseRecommender):
         return self.recommend_items_by_ratings(user_id, users_items.values(), num)
 
     def recommend_items_by_ratings(self, user_id, users_items, num=10):
-        result = defaultdict(0.0)
+        result = defaultdict(lambda: 0.0)
         for item in self.svd.recommend_items_by_ratings(user_id, users_items.values(), num):
             result[item[0]] += self.svd_w * float(item[1]["prediction"])
         for item in self.cf.recommend_items_by_ratings(user_id, users_items.values(), num):
             result[item[0]] += self.cf_w * float(item[1]["prediction"])
-        return dict(sorted(result.items(), key=lambda item: -item[1]))
+        return sorted(result.items(), key=lambda item: -item[1])
     
     def predict_score(self, user_id, item_id):
         return Decimal(self.svd_w) * self.svd.predict_score(user_id, item_id) + Decimal(self.cf_w) * self.cf.predict_score(user_id, item_id)

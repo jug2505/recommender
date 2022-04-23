@@ -7,6 +7,7 @@
             :title="movie.title"
             :year="movie.year"
             :card_image="movie.card_image"
+            :rating="parseInt(movie.rating)"
             v-bind:key="movie.movie_id"/>
     </div>
     
@@ -48,6 +49,46 @@
           :card_image="movie.card_image"
           v-bind:key="movie.movie_id"/>
     </div>
+
+    <div v-if="cont_movies.length !== 0" class="row-title">
+      Рекомендации на основе описаний фильмов
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in cont_movies"
+          :id="movie.movie_id"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
+
+    <div v-if="knn_movies.length !== 0" class="row-title">
+      Рекомендации KNN
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in knn_movies"
+          :id="movie.movie_id"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
+
+    <div v-if="hybrid_movies.length !== 0" class="row-title">
+      Рекомендации гибридной рекомендательной системы
+    </div>
+    <div class="film-row">
+      <film-card
+          v-for="movie in hybrid_movies"
+          :id="movie.movie_id"
+          :title="movie.title"
+          :year="movie.year"
+          :card_image="movie.card_image"
+          v-bind:key="movie.movie_id"/>
+    </div>
+
   </div>
 
 </template>
@@ -69,6 +110,10 @@ export default {
       pop_movies: [],
       cf_movies: [],
       svd_movies: [],
+      cont_movies: [],
+      hybrid_movies: [],
+      knn_movies: [],
+      
       api_key: "",
     }
   },
@@ -78,6 +123,9 @@ export default {
     this.getPopRecs()
     this.getCFRecs()
     this.getSVDRecs()
+    this.getContRecs()
+    this.getHybridRecs()
+    this.getKNNRecs()
   },
   methods: {
 
@@ -128,6 +176,48 @@ export default {
             
             //this.svd_movies = response.data.data
             this.getMoviePosters(this.svd_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getContRecs(){
+      axios
+        .get(API_URL + "/rec/content/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            response.data.data.forEach(element => {
+              this.cont_movies.push({movie_id: element[0], prediction: element[1].prediction})
+            });
+            
+            this.getMoviePosters(this.cont_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getHybridRecs(){
+      axios
+        .get(API_URL + "/rec/hybrid/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            response.data.data.forEach(element => {
+              this.hybrid_movies.push({movie_id: element[0], prediction: element[1]})
+            });
+
+            this.getMoviePosters(this.hybrid_movies)
+          })
+        .catch((error) => { console.log(error) })
+    },
+
+    getKNNRecs(){
+      axios
+        .get(API_URL + "/rec/knn/user/" + store.state.user_id + "/")
+        .then(
+          (response) => {
+            response.data.data.forEach(element => {
+              this.knn_movies.push({movie_id: element.movie_id, prediction: element.prediction})
+            });
+            
+            this.getMoviePosters(this.knn_movies)
           })
         .catch((error) => { console.log(error) })
     },

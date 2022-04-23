@@ -6,7 +6,7 @@ import secrets
 from django.http import JsonResponse
 from django.db.models import Avg, Count
 
-from recommender.models import Movie, Genre, SeededRecs, Rating
+from recommender.models import Movie, Genre, Rating
 from scripts.recommenders.rating_recommender import RatingRecommender
 from scripts.recommenders.collaborative_recommender import CollaborativeRecommender
 from scripts.recommenders.svd_recommender import SVDRecommender
@@ -51,18 +51,6 @@ def detail(request, movie_id):
     return JsonResponse(context_dict, safe=False)
 
 
-def get_association_rules_for(request, content_id, take=10):
-    """
-    Возвращает для указанного content_id схожие товары на основе
-    ассоциативных правил
-    [{'target': ..., 'confidence': ..., 'support': ...}, ... ]
-    """
-    data = SeededRecs.objects.filter(source=content_id) \
-               .order_by('-confidence') \
-               .values('target', 'confidence', 'support')[:take]
-    return JsonResponse(list(data), safe=False)
-
-
 def recs_by_popularity(request, user_id, num=10):
     """
     {
@@ -85,6 +73,7 @@ def recs_by_collaborative_filtering(request, user_id, num=10):
         'user_id': user_id,
         'data': CollaborativeRecommender(min_sim=0.1).recommend_items(user_id, num)
     }
+    print(data)
     return JsonResponse(data, safe=False)
 
 

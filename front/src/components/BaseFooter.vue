@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="media">
-      <a href="https://twitter.com/mvtweetings"><i class="fab fa-twitter"></i></a>
+      <!-- <a href="https://twitter.com/mvtweetings"><i class="fab fa-twitter"></i></a> -->
       <a href="https://github.com/jug2505/recommender"><i class="fab fa-github"></i></a>
     </div>
     <div class="extra">

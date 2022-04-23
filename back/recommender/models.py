@@ -40,9 +40,6 @@ class MovieDescriptions(models.Model):
     title = models.CharField(max_length=512)
     description = models.CharField(max_length=1024)
 
-    lda_vector = models.CharField(max_length=56, null=True)
-    sim_list = models.CharField(max_length=512, default='')
-
     class Meta:
         db_table = 'movie_description'
 
@@ -72,16 +69,3 @@ class DescriptionSimilarity(models.Model):
 
     def __str__(self):
         return "[({} => {}) sim = {}]".format(self.source, self.target, self.similarity)
-
-
-class SeededRecs(models.Model):
-    source = models.CharField(max_length=16)
-    target = models.CharField(max_length=16)
-    support = models.DecimalField(max_digits=10, decimal_places=8)
-    confidence = models.DecimalField(max_digits=10, decimal_places=8)
-
-    class Meta:
-        db_table = 'seeded_recs'
-
-    def __str__(self):
-        return "[({} => {}) support = {}, confidence = {}]".format(self.source, self.target, self.support, self.confidence)

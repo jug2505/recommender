@@ -175,7 +175,7 @@ def rmse_of_collaborative_recommender():
 
     min_number_of_ratings = 20
     min_overlap = 5
-    min_sim = 0.1
+    min_sim = 0.0
     min_rank = 5
     file_name = '{}-RMSE-cf.csv'.format(time.strftime("%Y%m%d-%H%M%S"))
 
@@ -302,5 +302,5 @@ def rmse_of_hybrid_recommender():
         file.write("{}, {}, {}\n".format(rmse, min_number_of_ratings, min_rank))
 
 if __name__ == '__main__':
-    rmse_of_hybrid_recommender()
+    rmse_of_collaborative_recommender()
  

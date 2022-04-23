@@ -34,3 +34,5 @@ urllib3
 pyLDAvis
 psycopg2-binary==2.8.6
 django-cors-headers
+sentence_transformers
+surprise

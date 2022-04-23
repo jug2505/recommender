@@ -7,7 +7,7 @@
     <div class="info">
       <div class="top">
         <div class="name"> {{ title }}</div>
-        <div class="genre"> {{ year }}</div>
+        <div class="genre"> {{ year }}  <span v-if="rating != -1">R: {{rating}}/10</span></div>
       </div>
     </div>
   </div>
@@ -33,6 +33,10 @@ export default {
     year: {
       type: Number,
       default: 0
+    },
+    rating: {
+      type: Number,
+      default: -1
     }
   },
   data() {

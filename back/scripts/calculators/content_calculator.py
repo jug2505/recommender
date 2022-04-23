@@ -10,11 +10,16 @@ from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rs_project.settings")
+import django
+django.setup()
+
 from recommender.models import MovieDescriptions, DescriptionSimilarity
 
 columns = ['movie_id', 'description']
 data = MovieDescriptions.objects.all().values(*columns)
 data = pd.DataFrame.from_records(data, columns=columns)
+
 #print(data)
 #X = np.array(data["description"])
 #print(X)

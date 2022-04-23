@@ -7,7 +7,7 @@
       <router-link :to="{ name: 'About' }">
         <header-button msg="О проекте"/>
       </router-link>
-      <search-bar/>
+      <!-- <search-bar/> -->
     </div>
     <div class="right">
       <router-link :to="{ name: 'User pick' }">
@@ -21,14 +21,14 @@
 
 <script>
 import HeaderButton from "./UI/HeaderButton";
-import SearchBar from "./UI/SearchBar";
+// import SearchBar from "./UI/SearchBar";
 import ProfileButton from "./UI/ProfileButton";
 import Logo from "./Logo";
 import UserButton from "./UI/UserButton";
 
 export default {
   name: "BaseHeader",
-  components: {HeaderButton, SearchBar, ProfileButton, Logo, UserButton},
+  components: {HeaderButton, ProfileButton, Logo, UserButton},
 }
 </script>
 

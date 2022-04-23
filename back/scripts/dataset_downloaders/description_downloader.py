@@ -20,7 +20,9 @@ def get_descriptions():
     api_key = get_api_key()
 
     #MovieDescriptions.objects.all().delete()
-    movies = list(Movie.objects.values("movie_id"))[16216:]
+    movies = list(Movie.objects.values("movie_id"))#[21981:]
+    
+    i = 0
 
     for movie in tqdm(movies):
         formated_url = url.format(movie["movie_id"], api_key)
@@ -30,7 +32,7 @@ def get_descriptions():
             md = MovieDescriptions(movie_id=movie["movie_id"], title=r['movie_results'][0]["title"], description=r['movie_results'][0]["overview"])
             md.save()
             #print(md)
-
+        
 
 def get_api_key():
     cred = json.loads(open(".rec").read())

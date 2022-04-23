@@ -21,10 +21,10 @@ class KNNRecommender(BaseRecommender):
         for m in movies:
             if (m not in users_items):
                 result = self.knn.predict(user_id, m["movie_id"]).est
-                if (result > 9):
+                if (result > 9.5):
                     reclist.append( {"movie_id": m["movie_id"], "prediction": result} )
 
-        reclist = sorted(reclist, key=lambda d: -d['prediction'])[:num]
+        reclist = sorted(reclist, key=lambda d: d['prediction'])[:num]
 
         return reclist
     

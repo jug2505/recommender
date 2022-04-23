@@ -16,7 +16,7 @@ from recommender.models import Rating
 
 class SimilarityMatrixBuilder:
 
-    def __init__(self, min_overlap=5, min_sim=0.1):
+    def __init__(self, min_overlap=5, min_sim=0.01):
         self.min_overlap = min_overlap
         self.min_sim = min_sim
 
@@ -49,7 +49,7 @@ class SimilarityMatrixBuilder:
 
     def save_similarities(self, sm, index):
         print('Очистка старых данных')
-        Similarity.objects.all().delete()
+        #Similarity.objects.all().delete()
         sims = []
         no_saved = 0
         print('Создание COO матрицы')
@@ -57,25 +57,25 @@ class SimilarityMatrixBuilder:
         csr = coo.tocsr()
         
         print(f'{coo.count_nonzero()} элементов схожести приступают к сохранению')
-        xs, ys = coo.nonzero()
-        for x, y in tqdm(zip(xs, ys), leave=True):
-            if x == y:
-                continue
+        # xs, ys = coo.nonzero()
+        # for x, y in tqdm(zip(xs, ys), leave=True):
+        #     if x == y:
+        #         continue
 
-            sim = csr[x, y]
-            if sim < self.min_sim:
-                continue
+        #     sim = csr[x, y]
+        #     if sim < self.min_sim:
+        #         continue
 
-            if len(sims) == 500000:
-                Similarity.objects.bulk_create(sims)
-                sims = []
+        #     if len(sims) == 500000:
+        #         Similarity.objects.bulk_create(sims)
+        #         sims = []
 
-            new_similarity = Similarity(source=index[x], target=index[y], similarity=sim)
-            no_saved += 1
-            sims.append(new_similarity)
+        #     new_similarity = Similarity(source=index[x], target=index[y], similarity=sim)
+        #     no_saved += 1
+        #     sims.append(new_similarity)
 
-        Similarity.objects.bulk_create(sims)
-        print('{} элементов схожести были сохранены после очистки'.format(no_saved))
+        # Similarity.objects.bulk_create(sims)
+        # print('{} элементов схожести были сохранены после очистки'.format(no_saved))
 
 
 def normalize(x):
@@ -103,7 +103,9 @@ def load_all_ratings(min_ratings=1):
 def main():
     print("Вычисление схожести элементов")
     all_ratings = load_all_ratings()
-    SimilarityMatrixBuilder(min_overlap=5, min_sim=0.01).build(all_ratings)
+
+    SimilarityMatrixBuilder(min_overlap=1, min_sim=0.0).build(all_ratings)
+
 
 
 if __name__ == '__main__':
