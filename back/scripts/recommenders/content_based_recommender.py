@@ -12,9 +12,6 @@ import django
 django.setup()
 
 
-lda_path = './lda/'
-
-
 class ContentBasedRecommender(BaseRecommender):
 
     def __init__(self, min_sim=0.1):
@@ -25,11 +22,6 @@ class ContentBasedRecommender(BaseRecommender):
     def recommend_items(self, user_id, num=6):
         active_user_items = Rating.objects.filter(user_id=user_id).order_by('-rating')[:100]
         return self.recommend_items_by_ratings(user_id, active_user_items.values(), num)
-
-    @staticmethod
-    def seeded_rec(content_ids, take=6):
-        data = DescriptionSimilarity.objects.filter(source__in=content_ids).order_by('-similarity').values('target', 'similarity')[:take]
-        return list(data)
 
     def recommend_items_by_ratings(self, user_id, active_user_items, num=6):
         if len(active_user_items) == 0:

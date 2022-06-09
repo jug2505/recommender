@@ -173,8 +173,6 @@ export default {
             response.data.data.forEach(element => {
               this.svd_movies.push({movie_id: element[0], prediction: element[1].prediction})
             });
-            
-            //this.svd_movies = response.data.data
             this.getMoviePosters(this.svd_movies)
           })
         .catch((error) => { console.log(error) })

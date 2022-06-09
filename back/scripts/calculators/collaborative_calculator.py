@@ -57,25 +57,25 @@ class SimilarityMatrixBuilder:
         csr = coo.tocsr()
         
         print(f'{coo.count_nonzero()} элементов схожести приступают к сохранению')
-        # xs, ys = coo.nonzero()
-        # for x, y in tqdm(zip(xs, ys), leave=True):
-        #     if x == y:
-        #         continue
+        xs, ys = coo.nonzero()
+        for x, y in tqdm(zip(xs, ys), leave=True):
+            if x == y:
+                continue
 
-        #     sim = csr[x, y]
-        #     if sim < self.min_sim:
-        #         continue
+            sim = csr[x, y]
+            if sim < self.min_sim:
+                continue
 
-        #     if len(sims) == 500000:
-        #         Similarity.objects.bulk_create(sims)
-        #         sims = []
+            if len(sims) == 500000:
+                Similarity.objects.bulk_create(sims)
+                sims = []
 
-        #     new_similarity = Similarity(source=index[x], target=index[y], similarity=sim)
-        #     no_saved += 1
-        #     sims.append(new_similarity)
+            new_similarity = Similarity(source=index[x], target=index[y], similarity=sim)
+            no_saved += 1
+            sims.append(new_similarity)
 
-        # Similarity.objects.bulk_create(sims)
-        # print('{} элементов схожести были сохранены после очистки'.format(no_saved))
+        Similarity.objects.bulk_create(sims)
+        print('{} элементов схожести были сохранены после очистки'.format(no_saved))
 
 
 def normalize(x):
