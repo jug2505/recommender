@@ -27,18 +27,6 @@ You have two choices for downloading the source code – downloading a zip file 
    will create a copy on your computer.
    `> git clone https://github.com/jug2505/recommender.git`
 
-###  Create an ID for themoviedb.org
-
-You have to create an ID with themoviedb.org to use its pictures.
-
-* Go to [https://www.themoviedb.org/account/signup](https://www.themoviedb.org/account/signup) 
-* Sign up
-* Login, go to your account settings and [create an API](https://www.themoviedb.org/settings/api)
-* Create a file in the moviegeek directory called ".rs" 
-* Open .rs and add { "themoviedb_apikey": <INSERT YOUR APIKEY HERE>}
-The file contents should look something like 
-{"themoviedb_apikey": "6d88c9a24b1bc9a60b374d3fe2cd92ac"}
-
 ## Create a virtual environment for the project
 
 Before you run the code, create a virtual environment.
