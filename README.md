@@ -1,16 +1,64 @@
 # recommender
-Рекомендательная система для фильмов
+Recommender system for movies. Combination of static metrics and visual review of recommendations.
 
-### Установка необходимых пакетов Python 
+Includes the following algorithms:
+* Recommendations by popularity
+* Recommendations by movie descrition
+* Item/Item collaborative filtering
+* User/User collaborative filtering
+* Regularized SVD
+
+## Project Setup
+In the following, we will go through the steps to set up this system. 
+
+The first thing is to download this repository. Secondly, create a themoviedb.org ID needed to run the website.
+
+### Download source code
+You have two choices for downloading the source code – downloading a zip file of the source code or using Git. 
+
+* *Downloading a zip file*
+ 
+   From the main [directory on GitHub](https://github.com/jug2505/recommender), 
+   click the green “Clone or download” button and choose to download a zip file to your computer.
+   
+* *Using Git*
+
+   Clone this repository or create a fork in your GitHub, and then clone that instead. The following command 
+   will create a copy on your computer.
+   `> git clone https://github.com/jug2505/recommender.git`
+
+###  Create an ID for themoviedb.org
+
+You have to create an ID with themoviedb.org to use its pictures.
+
+* Go to [https://www.themoviedb.org/account/signup](https://www.themoviedb.org/account/signup) 
+* Sign up
+* Login, go to your account settings and [create an API](https://www.themoviedb.org/settings/api)
+* Create a file in the moviegeek directory called ".rs" 
+* Open .rs and add { "themoviedb_apikey": <INSERT YOUR APIKEY HERE>}
+The file contents should look something like 
+{"themoviedb_apikey": "6d88c9a24b1bc9a60b374d3fe2cd92ac"}
+
+## Create a virtual environment for the project
+
+Before you run the code, create a virtual environment.
+
+```bash
+> cd back
+> virtualenv -p python3 venv
+> source venv/bin/activate
+```
+
+### Get the required packages 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-###  Конфигурация Django для подключения к PostGreSql
+###  Configuration Django for PostGreSql connection
 
-Откройте `rs_project/settings.py` 
+Open `rs_project/settings.py` 
 
-Обновите следующие строки:
+Update this lines:
 ```python
 DATABASES = {
     'default': {
@@ -24,23 +72,43 @@ DATABASES = {
 }
 ```
 
-### Запуск сервиса БД:
+Run the following commands:
+```bash
+> python3 manage.py makemigrations
+> python3 manage.py migrate --run-syncdb
+```
+
+#### Populate the database 
+Run the following scripts to download the datasets for the system. 
+```bash
+> python3 -m scripts.dataset_downloaders.movies_downloader
+> python3 -m scripts.dataset_downloaders.raitings_downloader
+> python3 -m scripts.dataset_downloaders.description_downloader
+```
+
+### Calculate recommendations
+Run all scripts in scripts/calculators folder.
+
+### Calculate static metrics
+Run scripts/statistic/metrics.py script. It includes RMSE and Precision at K metrics.
+
+### DB service run:
 ```
 sudo service postgresql start
 ```
 
-### Старт сервера Django
+### Django server run
 ```bash
 > python3 manage.py runserver 127.0.0.1:8081
 ```
 
-### Установка проекта Vue.js
+### Vue.js project setup
 
 ```
 npm install
 ```
 
-### Компиляция и запуск сервера для разработки Vue.js
+### Vue.js developer server
 
 ```
 npm run serve
